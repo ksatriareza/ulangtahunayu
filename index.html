@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Ayu</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body, html { height: 100%; font-family: 'Georgia', serif; overflow: hidden; }
+
+/* HALAMAN 1: COUNTDOWN */
+#countdown-page {
+  height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  color: #d4af37;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  transition: opacity 1s ease;
+}
+
+#countdown-page h1 {
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 300;
+  letter-spacing: 4px;
+  margin-bottom: 40px;
+}
+
+.timer {
+  display: flex;
+  gap: clamp(12px, 4vw, 30px);
+  font-size: clamp(26px, 8vw, 42px);
+  font-weight: 200;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer div span {
+  display: block;
+  font-size: clamp(10px, 2.5vw, 12px);
+  letter-spacing: 2px;
+  color: #aaa;
+  margin-top: 8px;
+}
+
+.btn-buka {
+  margin-top: 60px;
+  padding: 14px 40px;
+  border: 1px solid #d4af37;
+  background: transparent;
+  color: #d4af37;
+  font-size: 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+.btn-buka:active {
+  background: #d4af37;
+  color: #000;
+  transform: scale(0.98);
+}
+
+/* HALAMAN 2: UCAPAN + BORDER KIRI KAN */
+#ucapan-page {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: url('https://i.imgur.com/3XS0JKE.jpeg') no-repeat center 35% / cover;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.65);
+}
+
+/* Border mewah kiri kanan */
+.frame {
+  position: relative;
+  z-index: 3;
+  max-width: 600px;
+  width: 90%;
+  padding: 50px 30px;
+  border-left: 2px solid #d4af37;
+  border-right: 2px solid #d4af37;
+  text-align: center;
+}
+
+.frame::before, .frame::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: #d4af37;
+}
+.frame::before { top: 0; }
+.frame::after { bottom: 0; }
+
+.teks-ucapan {
+  color: #fff;
+  font-size: clamp(18px, 4vw, 12px);
+  line-height: 1.8;
+  white-space: pre-line;
+  border-right: 2px solid #d4af37;
+  display: inline-block;
+}
+
+/* CONFETTI GOLD */
+.confetti {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #d4af37;
+  top: -10px;
+  z-index: 2;
+  animation: jatuh 4s linear infinite;
+}
+
+@keyframes jatuh {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+audio { display: none; }
+</style>
+</head>
+<body>
+
+<!-- HALAMAN 1 -->
+<div id="countdown-page">
+  <h1>MENUJU HARI JADI AYU</h1>
+  <div class="timer">
+    <div><span id="hari">00</span><span>HARI</span></div>
+    <div><span id="jam">00</span><span>JAM</span></div>
+    <div><span id="menit">00</span><span>MENIT</span></div>
+    <div><span id="detik">00</span><span>DETIK</span></div>
+  </div>
+  <button class="btn-buka" onclick="bukaUcapan()">BUKA</button>
+</div>
+
+<!-- HALAMAN 2 -->
+<div id="ucapan-page">
+  <div class="overlay"></div>
+  <div class="frame">
+    <div class="teks-ucapan" id="typedText"></div>
+  </div>
+  <audio id="lagu" src="ulangtahun.mp3" loop></audio>
+</div>
+
+<script>
+// COUNTDOWN ke 07/07/2026 00:00
+const tanggalUlangTahun = new Date("Jul 07, 2026 00:00:00").getTime();
+
+setInterval(function() {
+  const now = new Date().getTime();
+  const jarak = tanggalUlangTahun - now;
+
+  const hari = Math.floor(jarak / (1000*60*60*24));
+  const jam = Math.floor((jarak % (1000*60*60*24)) / (1000*60*60));
+  const menit = Math.floor((jarak % (1000*60*60)) / (1000*60));
+  const detik = Math.floor((jarak % (1000*60)) / 1000);
+
+  if(jarak > 0) {
+    document.getElementById("hari").innerHTML = hari.toString().padStart(2,'0');
+    document.getElementById("jam").innerHTML = jam.toString().padStart(2,'0');
+    document.getElementById("menit").innerHTML = menit.toString().padStart(2,'0');
+    document.getElementById("detik").innerHTML = detik.toString().padStart(2,'0');
+  }
+}, 1000);
+
+// CONFETTI
+function confettiGold() {
+  for(let i=0; i<60; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.animationDelay = Math.random() * 2 + 's';
+      document.getElementById('ucapan-page').appendChild(c);
+      setTimeout(() => c.remove(), 5000);
+    }, i * 40);
+  }
+}
+
+// BUKA UCAPAN
+function bukaUcapan() {
+  document.getElementById('countdown-page').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('countdown-page').style.display = 'none';
+    document.getElementById('ucapan-page').style.display = 'flex';
+    
+    document.getElementById('lagu').play().catch(()=>{});
+    
+    const text = `Selamat Ulang Tahun ke-23 Ayu...
+
+Di tanggal 07.07.2026 ini,
+semoga 
+Panjang umur, sehat selalu,
+keinginan nya tercapai di tahun ini
+esok dan seterus nya
+semoga semua doa baik buat kamu
+cepat jadi nyata.
+
+Ayu, kamu berharga.`;
+    
+    let i = 0;
+    function ketik() {
+      if (i < text.length) {
+        document.getElementById("typedText").innerHTML += text.charAt(i);
+        i++;
+        setTimeout(ketik, 70);
+      } else {
+        document.getElementById("typedText").style.borderRight = 'none';
+        confettiGold();
+      }
+    }
+    ketik();
+  }, 1000);
+}
+</script>
+</body>
+</html>
